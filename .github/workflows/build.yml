@@ -1,0 +1,30 @@
+name: build
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restore
+        run: dotnet restore AppPortable.sln
+      - name: Build
+        run: dotnet build AppPortable.sln -c Release --no-restore
+      - name: Publish Desktop
+        run: >-
+          dotnet publish AppPortable.Desktop/AppPortable.Desktop.csproj
+          -c Release -r win-x64 --self-contained true
+          /p:PublishSingleFile=true
+          /p:IncludeNativeLibrariesForSelfExtract=true
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AppPortable-win-x64
+          path: AppPortable.Desktop/bin/Release/net8.0-windows/win-x64/publish/
