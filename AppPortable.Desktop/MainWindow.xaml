@@ -3,13 +3,79 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:AppPortable.Desktop"
         mc:Ignorable="d"
-        Title="AppPortable" Height="450" Width="800">
-    <Grid>
-        <TextBlock HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   FontSize="20"
-                   Text="AppPortable Desktop" />
-    </Grid>
+        Title="AppPortable" Height="720" Width="1280"
+        MinHeight="600" MinWidth="1000">
+    <DockPanel LastChildFill="True">
+        <Border DockPanel.Dock="Bottom" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource BorderBrushColor}" Padding="12,8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="160"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding StatusMessage}" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="1" Text="{Binding ErrorMessage}" Foreground="{DynamicResource ErrorBrush}" VerticalAlignment="Center" Margin="12,0,0,0"/>
+                <ProgressBar Grid.Column="2" Height="14" Minimum="0" Maximum="100" Value="{Binding ProgressValue}" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+
+        <Grid Margin="12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="240"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="320"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Margin="0,0,10,0" Padding="10" Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource BorderBrushColor}" BorderThickness="1" CornerRadius="6">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Bottom" Orientation="Vertical" Margin="0,10,0,0">
+                        <Button Content="Cargar PDF" Command="{Binding LoadDocumentCommand}" Height="32" Margin="0,0,0,8"/>
+                        <Button Content="Reindexar" Command="{Binding ReindexCommand}" Height="32"/>
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock Text="Documentos" FontWeight="Bold" FontSize="16" Margin="0,0,0,8"/>
+                        <ListBox ItemsSource="{Binding Documents}" SelectedItem="{Binding SelectedDocument}" DisplayMemberPath="DisplayName" Height="500"/>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <Border Grid.Column="1" Margin="0,0,10,0" Padding="10" Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource BorderBrushColor}" BorderThickness="1" CornerRadius="6">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,10">
+                        <TextBox Width="520" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" Height="32" VerticalContentAlignment="Center"/>
+                        <Button Content="Buscar" Command="{Binding SearchCommand}" Width="90" Height="32" Margin="8,0,0,0"/>
+                    </StackPanel>
+                    <ListBox ItemsSource="{Binding Results}" SelectedItem="{Binding SelectedSearchResult}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="0,4">
+                                    <TextBlock Text="{Binding DisplayTitle}" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding Snippet}" TextWrapping="Wrap" Opacity="0.9"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+            </Border>
+
+            <Border Grid.Column="2" Padding="10" Background="{DynamicResource PanelBrush}" BorderBrush="{DynamicResource BorderBrushColor}" BorderThickness="1" CornerRadius="6">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="Detalle" FontSize="16" FontWeight="Bold" Margin="0,0,0,12"/>
+                        <TextBlock Text="Archivo" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding SelectedSearchResult.SourceFile}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+                        <TextBlock Text="Página inicio" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding SelectedSearchResult.PageStart}" Margin="0,0,0,8"/>
+                        <TextBlock Text="Página fin" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding SelectedSearchResult.PageEnd}" Margin="0,0,0,8"/>
+                        <TextBlock Text="Snippet" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding SelectedSearchResult.Snippet}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+                        <TextBlock Text="Texto completo" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding SelectedSearchResult.FullText}" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </DockPanel>
 </Window>
