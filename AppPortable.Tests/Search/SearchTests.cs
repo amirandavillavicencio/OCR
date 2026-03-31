@@ -5,7 +5,7 @@ namespace AppPortable.Tests.Search;
 public class SearchTests
 {
     [Fact]
-    public void Placeholder_ShouldPass()
+    public void SearchSmoke_ShouldPass()
     {
         Assert.True(true);
     }
