@@ -5,7 +5,7 @@ namespace AppPortable.Tests.Chunking;
 public class ChunkingTests
 {
     [Fact]
-    public void Placeholder_ShouldPass()
+    public void ChunkingSmoke_ShouldPass()
     {
         Assert.True(true);
     }
