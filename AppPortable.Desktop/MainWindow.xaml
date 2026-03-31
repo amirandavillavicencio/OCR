@@ -3,13 +3,75 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:AppPortable.Desktop"
+        xmlns:models="clr-namespace:AppPortable.Desktop.Models"
         mc:Ignorable="d"
-        Title="AppPortable" Height="450" Width="800">
-    <Grid>
-        <TextBlock HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   FontSize="20"
-                   Text="AppPortable Desktop" />
+        Title="AppPortable OCR" Height="680" Width="1100" MinWidth="960" MinHeight="560">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+            <Button Content="Cargar PDF" Width="120" Margin="0,0,8,0" Command="{Binding LoadDocumentCommand}"/>
+            <Button Content="Reindexar" Width="120" Margin="0,0,16,0" Command="{Binding ReindexCommand}"/>
+            <TextBox Width="420" Margin="0,0,8,0" VerticalContentAlignment="Center" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Content="Buscar" Width="100" Command="{Binding SearchCommand}"/>
+        </StackPanel>
+
+        <ProgressBar Grid.Row="1" Height="14" Minimum="0" Maximum="100" Value="{Binding ProgressValue}" Margin="0,0,0,8"/>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+
+            <GroupBox Header="Documentos procesados" Margin="0,0,8,0">
+                <ListView ItemsSource="{Binding Documents}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Documento" DisplayMemberBinding="{Binding DocumentName}" Width="180" />
+                            <GridViewColumn Header="Chunks" DisplayMemberBinding="{Binding ChunkCount}" Width="70" />
+                            <GridViewColumn Header="JSON" DisplayMemberBinding="{Binding OutputJsonPath}" Width="260" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </GroupBox>
+
+            <GroupBox Grid.Column="1" Header="Resultados de búsqueda" Margin="0,0,8,0">
+                <ListView ItemsSource="{Binding SearchResults}" SelectedItem="{Binding SelectedSearchResult}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate DataType="{x:Type models:SearchResultItem}">
+                            <StackPanel Margin="0,0,0,8">
+                                <TextBlock FontWeight="Bold" Text="{Binding DocumentName}" />
+                                <TextBlock Text="{Binding ChunkNumber, StringFormat=Chunk #{0}}" />
+                                <TextBlock TextTrimming="CharacterEllipsis" MaxHeight="38" TextWrapping="Wrap" Text="{Binding Content}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </GroupBox>
+
+            <GroupBox Grid.Column="2" Header="Detalle del chunk">
+                <Grid Margin="6">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock FontWeight="Bold" Text="{Binding SelectedSearchResult.DocumentName, TargetNullValue=Sin selección}"/>
+                    <TextBlock Grid.Row="1" Margin="0,4,0,8" Text="{Binding SelectedSearchResult.ChunkNumber, StringFormat=Chunk #{0}, TargetNullValue=-}"/>
+                    <TextBox Grid.Row="2" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Text="{Binding SelectedSearchResult.Content, TargetNullValue=Selecciona un resultado para ver el detalle.}"/>
+                </Grid>
+            </GroupBox>
+        </Grid>
+
+        <Border Grid.Row="3" Margin="0,8,0,0" Padding="8" BorderBrush="#FFCCCCCC" BorderThickness="1" CornerRadius="4">
+            <TextBlock Text="{Binding StatusMessage}" />
+        </Border>
     </Grid>
 </Window>
